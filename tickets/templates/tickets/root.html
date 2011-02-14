@@ -1,0 +1,98 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" media="screen" href="http://static.tumblr.com/fkm6sn6/YbRl5zqmg/reset-min.css"/>	
+	<link href='http://fonts.googleapis.com/css?family=OFL+Sorts+Mill+Goudy+TT' rel='stylesheet' type='text/css'/>	
+	<link rel="stylesheet" href="/static/css/inkhorn.css" type="text/css" />
+</head>
+<body>					
+	<article id="main">		
+		<div id="innerborder">
+			<div class="header centre">			
+				<img src="/static/img/bicycle.gif" class="headerimage" alt=""/>
+
+				<h1 class="heading">NYC Cycling Tickets</h1>
+			</div>
+			
+			<section id="stats"></section>
+			<section id="new-ticket"></section>
+			<section id="tickets"></section>
+	
+			<footer>
+				<p>- Inkhorn theme by <a href="http://ptcampbell.me/" title="http://ptcampbell.me/">PT Campbell</a> -</p>
+			</footer>
+		</div>
+	</article>
+	
+	<script id="ticket-template" type="text/template">
+		<div class="block ticket <%= (description.length < 300) ? 'short' : 'medium' %>">
+			<h3 class="quote">
+				<%= description %>
+			</h3>
+			<address><%= location %></address>
+			
+			<p class="timestamp">$<%= cost %> on <%= date %></p>
+		</div>
+	</script>
+	
+	<script id="ticket-list-template" type="text/template">
+		<header>
+			<h1 class="subtitle">The Stories</h1>
+		</header>
+		<div class="linebreak"></div>
+	
+		<ul id="tickets">
+			<%= tickets %>
+		</ul>
+	
+		<footer>
+			<p><img src="/static/img/footer_bullet.png" alt=""/></p>	
+			<p class="pagination">
+				<a href="#" class="prev">&larr; Previous</a>
+				<a href="#" class="next">Next &rarr;</a>
+			</p>
+		</footer>
+	</script>
+	
+	<script id="stats-template" type="text/template">
+			<header>
+				<h1 class="subtitle">The Stats</h1>
+			</header>
+			<div class="linebreak"></div>
+      <div class="block">
+	     		<div class="stats">
+	          <table>
+						<tbody>
+	        <% _.each(stats, function(stat, i) { %>
+	            <tr class="line<%= (i % 2 == 0 ) ? 1 : 0 %>">
+	              <th><%= stat.name  %>:</th>
+	              <td><%= stat.value %></td>
+	            </tr>
+					<% }); %>
+						 </tbody>
+					   </table>
+						 <a href="{% url download %}" class="download">Download the raw data</a>
+	        </div>
+	     </div>
+			<div class="block">
+				<div class="map"></div>
+			</div>
+	</script>
+	
+	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+	<script type="text/javascript" src="/static/js/markerclusterer.js"></script>
+	<script type="text/javascript" src="/static/js/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="/static/js/underscore.js"></script>
+	<script type="text/javascript" src="/static/js/backbone.js"></script>
+	<script type="text/javascript" src="/static/js/date.js"></script>
+	<script type="text/javascript" src="/static/js/tickets.js"></script>
+	<script type="text/javascript">
+	$(function() {
+		var options = {
+			tickets: {{ tickets_json|safe }}
+		};
+
+		var tracker = new TicketTrack(options);
+	});
+	</script>
+</body>
+</html>
