@@ -20,7 +20,7 @@ class Command(NoArgsCommand):
       ticket_kwargs = {
         'location': random.choice(PLACES),
         'was_fair': random.random() > 0.25,
-        'cost':     Decimal('%s' % (random.random() * 300),),
+        'fine':     Decimal('%s' % (random.random() * 300),),
         'lat':      Decimal('%s' % (random.random() * 90),),
         'lng':      Decimal('%s' % (random.random() * 90),),
         'date':     datetime.today() - timedelta(days = int(random.random() * 30), hours = int(random.random() * 24))

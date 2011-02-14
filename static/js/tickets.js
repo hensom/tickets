@@ -28,14 +28,14 @@
     stats: function(start, end) {
       var total  = 0,
           unfair = 0,
-          cost   = 0;
+          fine   = 0;
 
       this.tickets.each(function(ticket) {
         var date = ticket.get('date');
         
         if(ticket.get('date').between(start, end)) {
           total += 1;
-          cost  += ticket.get('cost');
+          fine  += ticket.get('fine');
           
           if(ticket.get('was_unfair')) unfair += 1;
         }
@@ -44,8 +44,8 @@
       return [
         { name: "Tickets Given",        value: total  },
         { name: "Unfair Tickets Given", value: unfair },
-        { name: "Average Cost",         value: ((total > 0) ? cost / total : 0).toFixed(2) },
-        { name: "Total Cost",           value: cost.toFixed(2) }
+        { name: "Average Fine",         value: ((total > 0) ? fine / total : 0).toFixed(2) },
+        { name: "Total Fine",           value: fine.toFixed(2) }
       ];
     },
     render: function() {
@@ -106,7 +106,7 @@
     render: function() {
       var context = {
         'description': this.ticket.escape('description'),
-        'cost':        this.ticket.get('cost'),
+        'fine':        this.ticket.get('fine'),
         'date':        this.ticket.get('date').toString("ddd, MMM d - htt"),
         'location':    this.ticket.escape('location')
       }

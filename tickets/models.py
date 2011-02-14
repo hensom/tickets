@@ -3,7 +3,7 @@ from django.db.models import Model, BooleanField, DateTimeField, CharField, Text
 class Ticket(Model):
   date        = DateTimeField()
   was_fair    = BooleanField()
-  cost        = DecimalField(max_digits = 8, decimal_places = 2)
+  fine        = DecimalField(max_digits = 8, decimal_places = 2)
   location    = CharField(max_length = 500)
   description = TextField()
   lat         = DecimalField(max_digits = 9, decimal_places = 6)

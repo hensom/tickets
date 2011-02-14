@@ -20,7 +20,7 @@ def download(request):
 
   writer = csv.writer(response)
   
-  writer.writerow(['Date', 'Location', 'Cost', 'Was Fair', 'Description', 'Latitude', 'Longitude'])
+  writer.writerow(['Date', 'Location', 'Fine', 'Was Fair', 'Description', 'Latitude', 'Longitude'])
   
   for ticket in Ticket.objects.all().order_by('date'):
     if ticket.was_fair:
@@ -28,6 +28,6 @@ def download(request):
     else:
       was_fair = 'No'
 
-    writer.writerow([ticket.date, ticket.location, ticket.cost, was_fair, ticket.description, ticket.lat, ticket.lng])
+    writer.writerow([ticket.date, ticket.location, ticket.fine, was_fair, ticket.description, ticket.lat, ticket.lng])
 
   return response
