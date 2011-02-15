@@ -292,10 +292,13 @@
       this.marker = marker;
     },
     saveCoords: function(e) {
-      this._marker_moved = true;
+      // Responding to a dragend if this is defined
+      if(e) this._marker_moved = true; 
 
-      $(this.el).find('input[name="lat"]').val(e.latLng.lat());
-      $(this.el).find('input[name="lng"]').val(e.latLng.lng());
+      var pos = this.marker.getPosition();
+
+      $(this.el).find('input[name="lat"]').val(pos.lat());
+      $(this.el).find('input[name="lng"]').val(pos.lng());
 
       this.harvestForm();
     },
@@ -323,6 +326,8 @@
         if (status == google.maps.GeocoderStatus.OK) {
           map.setCenter(results[0].geometry.location);
           marker.setPosition(results[0].geometry.location);
+
+          self.saveCoords();
         } else {
         }
       });
