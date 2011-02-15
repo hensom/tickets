@@ -8,3 +8,6 @@ class Ticket(Model):
   description = TextField()
   lat         = DecimalField(max_digits = 9, decimal_places = 6)
   lng         = DecimalField(max_digits = 9, decimal_places = 6)
+  
+  def __unicode__(self):
+    return u'%s - %s' % (self.location, self.date)

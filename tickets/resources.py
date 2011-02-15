@@ -1,7 +1,9 @@
-from tastypie.resources import ModelResource
-from tickets.models     import Ticket
+from tastypie.authorization import Authorization
+from tastypie.resources     import ModelResource
+from tickets.models         import Ticket
 
 class TicketResource(ModelResource):
   class Meta:
-    queryset = Ticket.objects.all()
-    fields   = ['id', 'date', 'location', 'lat', 'lng', 'was_fair', 'fine', 'description']
+    queryset      = Ticket.objects.all()
+    fields        = ['id', 'date', 'location', 'lat', 'lng', 'was_fair', 'fine', 'description']
+    authorization = Authorization()

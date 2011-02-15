@@ -133,6 +133,7 @@ background-color:rgb(0,0,0);
 background-color:rgba(0, 0, 0, 0.8);
 width:35px;
 height:10px;
+margin-bottom: 1.5em;
 }
 
 .centre {
@@ -477,4 +478,71 @@ background:none;
 font-size:1.143em;
 text-align:left;
 padding-left:0px;;
+}
+
+label {
+  text-transform:uppercase;
+  font-size:0.714em;
+  letter-spacing:0.143em;
+  padding-right:0;
+  display: block;
+}
+
+.new-ticket input,
+.new-ticket textarea {
+  margin:      0.5em;
+  margin-left: 1em;
+  width:       15em;
+}
+
+.new-ticket .instruction {
+  font-size:0.714em;
+  letter-spacing:0.143em;
+  padding-right:0;
+  display: block;  
+  color: #333;
+  margin-left:  1.1em;
+  margin-bottom: 0;
+}
+
+.new-ticket input[name="fine"] {
+  width: 5em;
+}
+
+.new-ticket .map {
+  width:  270px;
+  height: 200px;
+  border: 5px solid rgba(0,0,0,.05);
+}
+
+input.invalid,
+textarea.invalid {
+  border: 2px solid #900;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+}
+
+.map-address {
+  font-size:0.714em;
+  letter-spacing:0.143em;
+  padding-right:0;
+  color: #333;
+  margin-left:  1.1em;
+}
+
+.map-address input[type="button"] {
+  width: auto;
+}
+
+#tickets .options {
+  font-size:0.9em;
+  letter-spacing:0.143em;
+  padding-right:0;
+  color: #333;
+  margin-left:  1.1em;
+  text-align: center;
+  margin-bottom: 1em;
 }
