@@ -495,7 +495,11 @@ label {
   width:       15em;
 }
 
-.new-ticket .instruction {
+.new-ticket input[name="was_fair"] {
+  width: auto;
+}
+
+.new-ticket .instructions {
   font-size:0.714em;
   letter-spacing:0.143em;
   padding-right:0;

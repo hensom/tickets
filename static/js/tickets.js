@@ -162,11 +162,11 @@
       'keyup input,textarea': 'harvestForm',
       'click input,textarea': 'harvestForm',
       'click input.save':     'saveTicket',
-      'click .map-address input[type=button]': 'centerMap',
-      'keyup .map-address input[type=text]':   'centerMap'
+      'click input[name=was_fair]' : 'syncFairText',
+      'keyup input[name=location]':  'centerMap'
     },
     initialize: function(options) {
-      _.bindAll(this, "harvestForm", "saveCoords", "saveTicket");
+      _.bindAll(this, "harvestForm", "saveCoords", "saveTicket", "doCenterMap");
 
       if(options.ticket) {
         this.ticket = options.ticket;
@@ -181,7 +181,15 @@
           'lng':         -73.9678574
         });
         this._shown = true;
+        this._marker_moved = false;
+        this._pending_map_update = null;
       }
+    },
+    syncFairText: function() {
+      var was_fair = $(this.el).find('input[name=was_fair]').first();
+      var desc     = $(this.el).find('.fair-text');
+
+      desc.text( (was_fair.get(0).checked) ? "It was fair" : "It was bogus" );
     },
     shown: function() {
       return this._shown;
@@ -203,6 +211,7 @@
           success: function(model, response) {
             self.trigger('newTicket', model);
             self.ticket = self.ticket.clone();
+            self._marker_moved = false;
             self.ticket.set({id: null});
           },
           error:   function(model, response) {
@@ -239,7 +248,7 @@
           inp.removeClass('invalid');
         }
       });
-      
+
       this.ticket.set(data);
     },
     render: function() {
@@ -260,6 +269,7 @@
       ticketView.render();
       
       this.renderMap();
+      this.syncFairText();
 
       return this;
     },
@@ -282,35 +292,49 @@
       this.marker = marker;
     },
     saveCoords: function(e) {
+      this._marker_moved = true;
+
       $(this.el).find('input[name="lat"]').val(e.latLng.lat());
       $(this.el).find('input[name="lng"]').val(e.latLng.lng());
 
       this.harvestForm();
     },
-    centerMap: function(e) {
-      // Don't center if responding to an event and enter wasn't just pressed
-      if(e && e.keyCode != 13) {
-        return;        
-      }
-
-      var address  = $(this.el).find('.map-address input[type="text"]').first();
-      var go       = $(this.el).find('.map-address input[type="button"]').first();
+    doCenterMap: function() {
+      var loc      = $(this.el).find('input[name=location]').val();
       var geocoder = new google.maps.Geocoder();
       var map      = this.map;
       var marker   = this.marker;
+      var self     = this;
 
-      geocoder.geocode( { 'address': address.val() }, function(results, status) {
+      if(this._pending_map_update) {
+        clearTimeout(this._pending_map_update);
+        this._pending_map_update = null;
+      }
+
+      var query = {
+        address: loc,
+        bounds:  new google.maps.LatLngBounds(
+          new google.maps.LatLng(41.185095,-78.315833),
+          new google.maps.LatLng(45.342717,-70.120032)
+        )
+      };
+
+      geocoder.geocode(query, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
-          address.removeClass('invalid');
-          go.val('Go')
-
           map.setCenter(results[0].geometry.location);
           marker.setPosition(results[0].geometry.location);
         } else {
-          address.addClass('invalid');
-          go.val('Try Again')
         }
       });
+    },
+    centerMap: function(e) {
+      var loc = $(this.el).find('input[name=location]').val();
+
+      if(this._marker_moved && loc.length < 3 || this._pending_map_update || this._marker_moved) {
+        return;
+      }
+
+      this._pending_map_update = setTimeout(this.doCenterMap, 1000);
     }
   })
   
@@ -421,7 +445,7 @@
       this.ticketsView.render();
       this.newTicketView.render();
       
-      this.newTicketView.hide();
+//      this.newTicketView.hide();
       
       var self = this;
       this.newTicketView.bind('newTicket', function(ticket) {

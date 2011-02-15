@@ -94,14 +94,15 @@
 				<input type="text" name="date" value="<%= date %>"/>
 				
 				<label>Location:</label>
-				<p class="instruction">This name will appear as part of the preview. You can tell us the exact location using the map on the right.</p>
+				<p class="instructions">This name will appear as part of the preview. You can tell us the exact location using the map on the right.</p>
 				<input type="text" name="location" value="<%= location %>"/>
 
 				<label>Fine:</label>
 				<input type="text" name="fine" value="<%= fine %>" />
 
 				<label>Was the ticket fair?:</label>
-				<input type="checkbox" name="was_fair" value="1" <%= (was_fair) ? "checked" : "" %> />
+        <p class="instructions">Use your best judgement here. A ticket for running a red light on the street is probably fair, while the same ticket in Central Park probably is not.</p>
+				<input type="checkbox" name="was_fair" value="1" <%= (was_fair) ? "checked" : "" %> /> <span class="fair-text"></span>
 				
 				<label>What Happened?</label>
 				<textarea name="description" rows="10" col="80"><%= description %></textarea>
@@ -114,7 +115,7 @@
 		</div>
 		<div class="block new-ticket">
 		   <label>Location of Ticket:</label>
-		   <p class="map-address">Jump to <input type="text" /><input type="button" value="Go" /></p>
+       <p class="instructions">You can drag the marker below to the precise stop where the ticket was issued.</p>
 		  <div class="map"></div>
 		</div>
 		<div class="new-ticket preview"></div>
