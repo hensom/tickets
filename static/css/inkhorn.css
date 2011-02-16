@@ -550,3 +550,14 @@ textarea:focus {
   text-align: center;
   margin-bottom: 1em;
 }
+
+.summary {
+  font-size:0.914em;
+  letter-spacing:0.143em;
+  padding-right:0;
+  display: block;  
+  color: #333;
+  margin-bottom: 0;
+  margin-left:  5em;
+  margin-right: 5em;
+}

@@ -1,5 +1,6 @@
 <html>
 <head>
+	<title>NYC Ticket Blitz!</title>
 	<link rel="stylesheet" type="text/css" media="screen" href="http://static.tumblr.com/fkm6sn6/YbRl5zqmg/reset-min.css"/>	
 	<link href='http://fonts.googleapis.com/css?family=OFL+Sorts+Mill+Goudy+TT' rel='stylesheet' type='text/css'/>	
 	<link rel="stylesheet" href="/static/css/inkhorn.css" type="text/css" />
@@ -10,7 +11,7 @@
 			<div class="header centre">			
 				<img src="/static/img/bicycle.gif" class="headerimage" alt=""/>
 
-				<h1 class="heading">NYC Cycling Tickets</h1>
+				<h1 class="heading">NYC Ticket Blitz!</h1>
 			</div>
 			
 			<section id="stats"></section>
@@ -44,6 +45,8 @@
       <input type="search" class="search" value="<%= search %>" /> <input type="button" class="do-search" value="Find Tickets" />
 		</div>
 		<div class="linebreak"></div>
+		
+		<%= (message) ? '<p class="centre">' + message + '</p>' : '' %>
 	
 		<div id="ticket-list">
 			<%= tickets %>
@@ -62,6 +65,8 @@
 			<header>
 				<h1 class="subtitle">The Stats</h1>
 			</header>
+			<p class="summary">In light of NYPD's penchat for <a href="http://gothamist.com/2011/01/24/nypd_cycling_crackdown_at_nearly_10.php">ticketing cyclists</a>, it seemed there should be a place to summarize the damage. Welcome to the blitz. If you have been given a ticket please add it here so we can keep track of how widespread this situation has become.
+			</p>
 			<div class="linebreak"></div>
       <div class="block">
 	     		<div class="stats">

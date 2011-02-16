@@ -1,4 +1,4 @@
-(function() {
+$(function() {
   if(window.TicketTrack) {
    return; 
   }
@@ -6,6 +6,10 @@
   // Via: http://joshbohde.com/2010/11/25/backbonejs-and-django/
   // We should modify tastypie to just return the full object back after creation
   var oldSync = Backbone.sync;
+  
+  var escapeHTML = function(string) {
+    return string.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  };
 
   Backbone.sync = function(method, model, success, error) {
       var newSuccess = function(resp, status, xhr){
@@ -56,8 +60,9 @@
       this.start   = Date.today().addDays(-60);
       this.end     = Date.today().addDays(2);
       
-      this.tickets.bind('add',    this.render);
-      this.tickets.bind('remove', this.render);
+      this.tickets.bind('add',     this.render);
+      this.tickets.bind('remove',  this.render);
+      this.tickets.bind('refresh', this.render);
     },
     stats: function(start, end) {
       var total  = 0,
@@ -103,29 +108,26 @@
 
       var map     = new google.maps.Map($(this.el).find('.map').get(0), mapOptions);
       var markers = [];
-
-      var latSum = 0, lngSum = 0, coordNum = 0;
+      var bounds  = new google.maps.LatLngBounds();
       
       this.tickets.each(function(ticket) {
         if(!ticket.get('date').between(self.start, self.end)) {
           return;
         }
-
-        latSum += ticket.get('lat');
-        lngSum += ticket.get('lng');
-        
-        coordNum++;
         
         var pos    = new google.maps.LatLng(ticket.get('lat'), ticket.get('lng'));
         var marker = new google.maps.Marker({ map: map, position: pos });
+        
+        google.maps.event.addListener(marker, "click", function() {
+          self.trigger('ticket:clicked', ticket);
+        });
         markers.push(marker);
+        bounds.extend(pos);
       });
 
       var markerCluster = new MarkerClusterer(map, markers);
-      
-      if(coordNum > 0) {
-        map.setCenter(new google.maps.LatLng(latSum / coordNum, lngSum / coordNum));
-      }
+
+      map.fitBounds(bounds);
       
       return this;
     }
@@ -172,7 +174,7 @@
         this.ticket = options.ticket;
       } else {
         this.ticket = new Ticket({
-          'date':        Date.now(),
+          'date':        new Date(),
           'fine':        '270',
           'was_fair':     true,
           'location':    'Central Park',
@@ -209,7 +211,7 @@
         var self = this;
         this.ticket.save({}, {
           success: function(model, response) {
-            self.trigger('newTicket', model);
+            self.trigger('ticket:created', model);
             self.ticket = self.ticket.clone();
             self._marker_moved = false;
             self.ticket.set({id: null});
@@ -350,10 +352,11 @@
       'click .prev':   'prevPage',
       'click .next':   'nextPage',
       'click .add':    'toggleNewTicket',
-      'click .do-search': 'filterTickets'
+      'click .do-search': 'filterTickets',
+      'keyup .search':    'maybeFilterTickets'
     },
     initialize: function(options) {
-      _.bindAll(this, 'render', 'filterTickets', 'nextPage', 'prevPage');
+      _.bindAll(this, 'render', 'filterTickets', 'nextPage', 'prevPage', 'toggleNewTicket');
 
       this.allTickets       = options.tickets;
       this.matchingTickets  = new TicketList(options.tickets.models);
@@ -362,9 +365,21 @@
       this.offset           = 0;
       this.search           = ''
       
-      this.allTickets.bind('add',    this.filterTickets);
-      this.allTickets.bind('remove', this.filterTickets);
+      this.allTickets.bind('add',     this.filterTickets);
+      this.allTickets.bind('remove',  this.filterTickets);
+      this.allTickets.bind('refresh', this.filterTickets);
+      this.matchingTickets.bind('add',     this.render);
+      this.matchingTickets.bind('remove',  this.render);
       this.matchingTickets.bind('refresh', this.render);
+    },
+    setSearch: function(search) {
+      $(this.el).find('.search').val(search);
+      this.filterTickets();
+    },
+    maybeFilterTickets: function(e) {
+      if(e.keyCode == 13) {
+        this.filterTickets();
+      }
     },
     filterTickets: function() {
       this.search = $(this.el).find('.search').val();
@@ -419,8 +434,9 @@
     },
     render: function() {
       var context = {
-        'search': escape(this.search),
-        'tickets': ''
+        'search': escapeHTML(this.search),
+        'tickets': '',
+        'message': ''
       }
       
       var initialOffset = this.offset * this.displayedTickets;
@@ -430,6 +446,10 @@
         var view = new TicketView({ticket: this.matchingTickets.at(i)}).render();
 
         context.tickets += $(view.el).html();
+      }
+      
+      if(!context.tickets) {
+        context.message = 'No tickets have been added.';
       }
       
       $(this.el).html(this.template(context));
@@ -450,13 +470,16 @@
       this.ticketsView.render();
       this.newTicketView.render();
       
-//      this.newTicketView.hide();
+      this.newTicketView.hide();
       
       var self = this;
-      this.newTicketView.bind('newTicket', function(ticket) {
-        self.tickets.add(ticket);
+      this.newTicketView.bind('ticket:created', function(ticket) {
+        self.tickets.refresh([ticket].concat(self.tickets.models));
         self.newTicketView.hide();
+      });
+      this.statsView.bind("ticket:clicked", function(ticket) {
+        self.ticketsView.setSearch(ticket.get('location'));
       });
     }
   });
-})();
+});
