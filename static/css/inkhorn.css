@@ -156,8 +156,9 @@ text-align: center;
 text-transform: uppercase;
 }
 
-footer p {
+#main footer p {
 margin-bottom:0em;
+text-align: center;
 }
 
 footer a:link,footer a:visited {
