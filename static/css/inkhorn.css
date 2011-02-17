@@ -9,6 +9,12 @@
   http://www.tumblr.com/theme/17428
 */
 
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+display: block;
+}
+
 body {
 background:#F7F7F7 url(../img/bg.gif);
 }
@@ -150,8 +156,9 @@ text-align: center;
 text-transform: uppercase;
 }
 
-footer p {
+#main footer p {
 margin-bottom:0em;
+text-align: center;
 }
 
 footer a:link,footer a:visited {
