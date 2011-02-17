@@ -33,12 +33,25 @@ $(function() {
   }
 
   var Ticket      = Backbone.Model.extend({
-    url:   'api/v1/ticket/',
+    url:   '/api/v1/ticket/',
     parse: function(response) {
       return parseTicket(response);
     },
     toJSON: function() {
       var obj = _.clone(this.attributes);
+      
+      function f(n) {
+          // Format integers to have at least two digits.
+          return n < 10 ? '0' + n : n;
+      }
+      
+      // Tranfer Date as they were type, not in UTC
+      obj.date = obj.date.getFullYear()   + '-' +
+               f(obj.date.getMonth() + 1) + '-' +
+               f(obj.date.getDate())      + 'T' +
+               f(obj.date.getHours())     + ':' +
+               f(obj.date.getMinutes())   + ':' +
+               f(obj.date.getSeconds());
       
       // Force all decimals to strings until we patch tastypie
       _.each(['lat', 'lng', 'fine'], function(prop) {
@@ -95,6 +108,7 @@ $(function() {
       $(this.el).html(this.template(context));
       
       this.renderMap();
+      //this.renderChart();
       
       return this;
     },
@@ -130,6 +144,52 @@ $(function() {
       map.fitBounds(bounds);
       
       return this;
+    },
+    renderChart: function() {
+      var days        = [0, 1, 2, 3, 4, 5, 6];
+      var dayNames    = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+      var periods     = [[0, 4], [5, 9], [10, 12],[13, 16], [17, 20], [21, 23]];
+      var periodNames = ["12am-4", "5-9", "9am-noon", "1pm-4pm", "5pm-8pm", "9pm-midnight"];
+      var summary      = { };
+      
+      var xs = [ ], ys = [ ], data = [ ], lookup = { };
+      var i  = 0;
+      
+      _.each(days, function(day, di) { _.each(periods, function(period, pi) {
+          xs.push(pi); ys.push(di); data.push(0);
+          
+          var key     = [di, pi].join('-');
+          lookup[key] = i++;
+      }); });
+      
+      this.tickets.each(function(ticket) {
+        var day    = ticket.get('date').getDay();
+        var hour   = ticket.get('date').getHours();
+        var period = null;
+        
+        for(var i = 0 ; i < periods.length; i++) {
+          var min = periods[i][0], max = periods[i][1];
+          
+          if(hour >= min && hour <= max) {
+            period = i;
+            break;
+          }
+        }
+        
+        var key = [day, period].join('-');
+        data[lookup[key]]++;
+      });
+
+      var options = {symbol: "o", max: 10, heat: true, axis: "0 0 1 1", axisxstep: 23, axisystep: 6, axisxlabels: periodNames, axisxtype: " ", axisytype: " ", axisylabels: dayNames}
+      var r       = Raphael();//"graph"); //$(this.el).find('graph').get(0));
+      
+      r.g.txtattr.font = "11px 'Fontin Sans', Fontin-Sans, sans-serif";
+      r.g.dotchart(10, 10, 620, 270, xs, ys, data, options).hover(function () {
+        this.tag = this.tag || r.g.tag(this.x, this.y, this.value, 0, this.r + 2).insertBefore(this);
+        this.tag.show();
+      }, function () {
+        this.tag && this.tag.hide();
+      });
     }
   });
   
@@ -161,14 +221,14 @@ $(function() {
     el: "#new-ticket",
     template: _.template($("#new-ticket-template").html()),
     events: {
-      'keyup input,textarea': 'harvestForm',
-      'click input,textarea': 'harvestForm',
-      'click input.save':     'saveTicket',
-      'click input[name=was_fair]' : 'syncFairText',
-      'keyup input[name=location]':  'centerMap'
+      'keyup input,textarea':       'harvestForm',
+      'click input[type=checkbox]': 'harvestForm',
+      'click input.save':           'saveTicket',
+      'click input[name=was_fair]': 'syncFairText',
+      'keyup input[name=location]': 'centerMap'
     },
     initialize: function(options) {
-      _.bindAll(this, "harvestForm", "saveCoords", "saveTicket", "doCenterMap");
+      _.bindAll(this);
 
       if(options.ticket) {
         this.ticket = options.ticket;
@@ -209,7 +269,7 @@ $(function() {
       
       if(this.valid) {
         var self = this;
-        this.ticket.save({}, {
+        this.ticket.save(null, {
           success: function(model, response) {
             self.trigger('ticket:created', model);
             self.ticket = self.ticket.clone();
@@ -250,7 +310,7 @@ $(function() {
           inp.removeClass('invalid');
         }
       });
-
+      
       this.ticket.set(data);
     },
     render: function() {
