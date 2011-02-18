@@ -224,7 +224,7 @@ $(function() {
     },
     render: function() {
       var context = {
-        'description': this.ticket.escape('description'),
+        'description': this.ticket.escape('description').split("\n").join("<br />"),
         'fine':        this.ticket.get('fine'),
         'date':        this.ticket.get('date').toString("ddd, MMM d - htt"),
         'location':    this.ticket.escape('location')
@@ -243,11 +243,10 @@ $(function() {
       'keyup input,textarea':       'harvestForm',
       'click input[type=checkbox]': 'harvestForm',
       'click input.save':           'saveTicket',
-      'click input[name=was_fair]': 'syncFairText',
       'keyup input[name=location]': 'centerMap'
     },
     initialize: function(options) {
-      _.bindAll(this);
+      _.bindAll(this, 'doCenterMap');
 
       if(options.ticket) {
         this.ticket = options.ticket;
@@ -265,12 +264,6 @@ $(function() {
         this._marker_moved = false;
         this._pending_map_update = null;
       }
-    },
-    syncFairText: function() {
-      var was_fair = $(this.el).find('input[name=was_fair]').first();
-      var desc     = $(this.el).find('.fair-text');
-
-      desc.text( (was_fair.get(0).checked) ? "It was fair" : "It was bogus" );
     },
     shown: function() {
       return this._shown;
@@ -350,7 +343,6 @@ $(function() {
       ticketView.render();
       
       this.renderMap();
-      this.syncFairText();
 
       return this;
     },
@@ -368,7 +360,7 @@ $(function() {
       google.maps.event.addListener(marker, "dragend", this.saveCoords);
 
       map.setCenter(pos);
-      
+
       this.map    = map;
       this.marker = marker;
     },
@@ -532,7 +524,9 @@ $(function() {
       }
       
       $(this.el).html(this.template(context));
-      $(this.el).find("#ticket-list").masonry({ singleMode: true, animate: true });
+      try {
+        $(this.el).find("#ticket-list").masonry({ singleMode: true, animate: true });
+      } catch(e) { }
       
       return this;
     }

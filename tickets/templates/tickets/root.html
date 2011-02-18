@@ -28,7 +28,7 @@
 	</article>
 	
 	<script id="ticket-template" type="text/template">
-		<div class="block ticket <%= (description.length < 300) ? 'short' : 'medium' %>">
+		<div class="block ticket <%= (description.length < 200) ? 'short' : (description.length < 400) ? 'medium' : 'long' %>">
 			<h3 class="quote">
 				<%= description %>
 			</h3>
@@ -54,9 +54,9 @@
 			<%= tickets %>
 		</div>
 	
-		<footer>
-			<p><img src="/static/img/footer_bullet.png" alt=""/></p>	
-			<p class="pagination">
+		<footer style="font-size: 0.714em; letter-spacing: 2px; text-align: center; text-transform: uppercase;">
+			<p style="font-size: 0.714em; letter-spacing: 2px; text-align: center; text-transform: uppercase;"><img src="/static/img/footer_bullet.png" alt=""/></p>	
+			<p class="pagination" style="font-size: 0.714em; letter-spacing: 2px; text-align: center; text-transform: uppercase;">
 				<a href="#" class="prev">&larr; Previous</a>
 				<a href="#" class="next">Next &rarr;</a>
 			</p>
@@ -82,12 +82,14 @@
 					<% }); %>
 						 </tbody>
 					   </table>
-						 <a href="{% url download %}" class="download">Download the raw data</a>
+		<div class="footer">
+                    <a href="{% url download %}" class="download">Download the raw data</a>
+                    <a href="#" class="time-of-day">View by Time of Day</a>
+		</div>
 	        </div>
 	     </div>
 			<div class="block">
 				<div class="map"></div>
-        <a href="#" class="time-of-day">View by Time of Day</a>
 			</div>
 			<div class="graph">
 				<div id="graph"></div>

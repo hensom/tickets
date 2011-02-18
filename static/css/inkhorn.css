@@ -51,6 +51,11 @@ strong {
 font-weight:700;
 }
 
+a {
+color:rgb(0,0,0);
+color:rgba(0,0,0,.4);
+}
+
 a:hover {
 color:rgb(0,0,0);
 color:rgba(0,0,0,.4);
@@ -156,7 +161,7 @@ text-align: center;
 text-transform: uppercase;
 }
 
-#main footer p {
+footer p {
 margin-bottom:0em;
 text-align: center;
 }
@@ -189,11 +194,22 @@ margin:0px 0px 30px 60px;
   border: 5px solid rgba(0,0,0,.05);
 }
 
+#stats .footer {
+  position: relative;
+}
+
 #stats .download,
 #stats .time-of-day {
-  display:    block;
-  text-align: right;
+  position:   absolute;
   font-size:  0.714em;
+}
+
+#stats .download {
+  right: 0;
+}
+
+#stats .time-of-day {
+  left: 0;
 }
 
 .clear {
@@ -241,11 +257,13 @@ background:rgba(0,0,0,.15);
 background:rgba(0,0,0,.2);
 }
 
+/*
 .photo p,.video p {
 text-align:left;
 font-style:italic;
 margin:5px 0;
 }
+*/
 
 .player {
 background:rgba(0,0,0,.05);
@@ -290,12 +308,18 @@ padding-left:25px;
 background:url(../img/quote.png) no-repeat top left;
 }
 
-.ticket.medium h3,.ticket.long h3 {
+.ticket.medium h3 {
 font-size:1.143em;
 padding-left:25px;
 line-height:22px;
 background:url(../img/quote.png) no-repeat top left;
-}	
+}
+.ticket.long h3 {
+font-size:0.9em;
+padding-left:25px;
+line-height:22px;
+background:url(../img/quote.png) no-repeat top left;
+}
 
 .ticket address {
   text-align: right;
@@ -454,7 +478,7 @@ font-size:0.857em;
 }
 
 a,a:visited,h1 a:hover,h3 a:hover {
-color:rgba(0,0,0);
+color:rgb(0,0,0);
 color:rgba(0,0,0,.6);
 }
 
