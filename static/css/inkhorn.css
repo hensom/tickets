@@ -66,7 +66,7 @@ font-size:2.5em;
 margin-bottom:25px;
 }
 
-h1 a:link,h1 a:visited,h3 a:link,h3 a:visited {
+h1 a,h1 a:visited,h3 a,h3 a:visited {
 color:rgb(0,0,0);
 color:rgba(0,0,0,.8);
 text-decoration:none;
@@ -161,7 +161,7 @@ margin-bottom:0em;
 text-align: center;
 }
 
-footer a:link,footer a:visited {
+footer a,footer a:visited {
 color:rgb(0,0,0);
 color:rgba(0, 0, 0, 0.8);
 text-decoration:none;
@@ -189,7 +189,8 @@ margin:0px 0px 30px 60px;
   border: 5px solid rgba(0,0,0,.05);
 }
 
-#stats .download {
+#stats .download,
+#stats .time-of-day {
   display:    block;
   text-align: right;
   font-size:  0.714em;
@@ -325,7 +326,7 @@ color:rgb(0, 0, 0);
 color:rgba(0, 0, 0, 0.6);
 }
 
-.timestamp a:link,.timestamp a:visited,.timestamp_right a:link,.timestamp_right a:visited {
+.timestamp a,.timestamp a:visited,.timestamp_right a,.timestamp_right a:visited {
 color:rgb(0, 0, 0);
 color:rgba(0, 0, 0, 0.6);
 text-decoration:none;
@@ -362,7 +363,7 @@ letter-spacing:2px;
 margin-right:1em;
 }
 
-.pages a:link, footer a:visited {
+.pages a, footer a:visited {
 color:rgb(0,0,0);
 color:rgba(0, 0, 0, 0.8);
 text-decoration:none;
@@ -373,7 +374,7 @@ color: rgba(0, 0, 0, 0.597656);
 text-decoration:none;
 }
 
-.pages a:link,footer a:visited {
+.pages a,footer a:visited {
 color:rgb(0,0,0);
 color:rgba(0, 0, 0, 0.8);
 text-decoration:none;
@@ -452,7 +453,7 @@ width:152px;
 font-size:0.857em;
 }
 
-a:link,a:visited,h1 a:hover,h3 a:hover {
+a,a:visited,h1 a:hover,h3 a:hover {
 color:rgba(0,0,0);
 color:rgba(0,0,0,.6);
 }
@@ -567,4 +568,9 @@ textarea:focus {
   margin-bottom: 0;
   margin-left:  5em;
   margin-right: 5em;
+}
+
+.graph {
+  clear: both;
+  margin-left: 60px;
 }

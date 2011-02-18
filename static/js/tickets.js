@@ -66,8 +66,11 @@ $(function() {
   var StatsView   = Backbone.View.extend({
     el:      $("#stats"),
     template: _.template($("#stats-template").html()),
+    events: {
+    'click .time-of-day': 'toggleChart'
+    },
     initialize: function(options) {
-      _.bindAll(this, 'render');
+      _.bindAll(this, 'render', 'toggleChart');
 
       this.tickets = options.tickets;
       this.start   = Date.today().addDays(-60);
@@ -76,6 +79,20 @@ $(function() {
       this.tickets.bind('add',     this.render);
       this.tickets.bind('remove',  this.render);
       this.tickets.bind('refresh', this.render);
+      this.chartShown = false;
+    },
+    syncChartVisibility: function() {
+      if(this.chartShown) {
+        $("#graph").slideDown();
+      } else {
+        $("#graph").slideUp();
+      }
+    },
+    toggleChart: function(e) {
+      e.preventDefault();
+
+      this.chartShown = !this.chartShown;
+      this.syncChartVisibility();
     },
     stats: function(start, end) {
       var total  = 0,
@@ -108,7 +125,7 @@ $(function() {
       $(this.el).html(this.template(context));
       
       this.renderMap();
-      //this.renderChart();
+      this.renderChart();
       
       return this;
     },
@@ -142,14 +159,16 @@ $(function() {
       var markerCluster = new MarkerClusterer(map, markers);
 
       map.fitBounds(bounds);
+
+      this.syncChartVisibility();
       
       return this;
     },
     renderChart: function() {
       var days        = [0, 1, 2, 3, 4, 5, 6];
-      var dayNames    = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-      var periods     = [[0, 4], [5, 9], [10, 12],[13, 16], [17, 20], [21, 23]];
-      var periodNames = ["12am-4", "5-9", "9am-noon", "1pm-4pm", "5pm-8pm", "9pm-midnight"];
+      var dayNames    = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      var periods     = [ [0, 4],  [5, 8],   [9, 12],    [13, 16],   [17, 20],    [21, 23] ];
+      var periodNames = ["12am-5", "5am-9", "9am-noon", "noon-5pm", "5pm-8pm", "9pm-midnight"];
       var summary      = { };
       
       var xs = [ ], ys = [ ], data = [ ], lookup = { };
@@ -180,11 +199,11 @@ $(function() {
         data[lookup[key]]++;
       });
 
-      var options = {symbol: "o", max: 10, heat: true, axis: "0 0 1 1", axisxstep: 23, axisystep: 6, axisxlabels: periodNames, axisxtype: " ", axisytype: " ", axisylabels: dayNames}
-      var r       = Raphael();//"graph"); //$(this.el).find('graph').get(0));
-      
+      var options = {symbol: "o", max: 10, heat: true, axis: "0 0 1 1", axisxstep: 5, axisystep: 6, axisxlabels: periodNames, axisxtype: " ", axisytype: " ", axisylabels: dayNames}
+      var r       = Raphael("graph");
+
       r.g.txtattr.font = "11px 'Fontin Sans', Fontin-Sans, sans-serif";
-      r.g.dotchart(10, 10, 620, 270, xs, ys, data, options).hover(function () {
+      r.g.dotchart(0, 0, 600, 240, xs, ys, data, options).hover(function () {
         this.tag = this.tag || r.g.tag(this.x, this.y, this.value, 0, this.r + 2).insertBefore(this);
         this.tag.show();
       }, function () {
