@@ -322,7 +322,8 @@ $(function() {
           inp.removeClass('invalid');
         }
       });
-      
+      data.was_fair = $(this.el).find('form input[name=was_fair]').get(0).checked;
+
       this.ticket.set(data);
     },
     render: function() {

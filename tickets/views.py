@@ -8,7 +8,7 @@ from tickets.resources import TicketResource
 def root(request):
   tr = TicketResource()
   context = {  
-    "tickets_json": tr.serialize(request, [tr.full_dehydrate(ticket) for ticket in Ticket.objects.all()], 'application/json')
+    "tickets_json": tr.serialize(request, [tr.full_dehydrate(ticket) for ticket in Ticket.objects.all().order_by('-date')], 'application/json')
   };
 
   return render_to_response('tickets/root.html', context, RequestContext(request))
@@ -22,7 +22,7 @@ def download(request):
   
   writer.writerow(['Date', 'Location', 'Fine', 'Was Fair', 'Description', 'Latitude', 'Longitude'])
   
-  for ticket in Ticket.objects.all().order_by('date'):
+  for ticket in Ticket.objects.all().order_by('-date'):
     if ticket.was_fair:
       was_fair = 'Yes'
     else:
